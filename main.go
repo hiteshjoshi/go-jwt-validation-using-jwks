@@ -3,33 +3,32 @@ package main
 import (
 	"log"
 	"net/http"
-	"strings"
+	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/jurabek/jwt-validation/jwt"
-	"github.com/jurabek/jwt-validation/middleware"
+	"github.com/hiteshjoshi/jwt-validation/jwt"
+	"github.com/hiteshjoshi/jwt-validation/middleware"
 )
 
 func main() {
 
 	httpClient := jwt.JWKHttpClient{}
 	verifier := jwt.JwtTokenVerifier{
-		JWKSUri:    "https://dev-kc4te-sm.eu.auth0.com/.well-known/jwks.json",
+		JWKSUri:    os.Getenv("JWKS_URI"),
 		HTTPClient: &httpClient,
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/info", func(w http.ResponseWriter, r *http.Request) {
-		t := strings.Split(r.Header.Get("Authorization"), " ")[1]
-		token, _ := verifier.Parse(r.Context(), t)
 
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(token.Raw))
+	//200 on success
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
 	})
 
 	amw := middleware.Auth{
 		JwtTokenVerifier: verifier,
 	}
+	//middleware to validate jwt
 	r.Use(amw.Middleware)
 
 	err := http.ListenAndServe(":3000", r)

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/jurabek/jwt-validation/jwt"
+	"github.com/hiteshjoshi/jwt-validation/jwt"
 )
 
 type Auth struct {
