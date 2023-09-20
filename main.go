@@ -31,6 +31,6 @@ func main() {
 	//middleware to validate jwt
 	r.Use(amw.Middleware)
 
-	err := http.ListenAndServe(":3000", r)
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), r)
 	log.Fatal(err)
 }
